@@ -1,27 +1,27 @@
 import Frame from "../frames/ReferenciaNUR.js";
 
-
 export const NUR = ({
-  VAR_TESTE_INCIAL,
-  MAX_REFERENCIAS_PARA_RESETAR,
-  QUANTIDADES_DE_TESTES,
-  MIN_FRAME_Q1,
-  MAX_FRAME_Q2,
+  testeInitial,
+  maxRefReset,
+  testAmount,
+  minQ1,
+  maxQ2,
 }) => {
-  const separandoItens = VAR_TESTE_INCIAL.split('-');
-  separandoItens.pop();
+  const splitItems = testeInitial
+    .split('-');
 
-  const respostas = [];
-  let acertos = 0;
-  let faltas = 0;
+  splitItems.pop();
 
-  const intervalosDeFrames = Math.round((MAX_FRAME_Q2 - MIN_FRAME_Q1) / (QUANTIDADES_DE_TESTES)) + 1;
-  const numerosDeFrames = typeof (QUANTIDADES_DE_TESTES) === 'string' ? +intervalosDeFrames : QUANTIDADES_DE_TESTES.length;
+  const answers = [];
+  let corrects = 0;
+  let faults = 0;
 
-  let interV = MIN_FRAME_Q1;
-  for (let indexTeste = 0; indexTeste < numerosDeFrames; indexTeste++) {
-    const frameDoTesteAtual = typeof (QUANTIDADES_DE_TESTES) === 'string' ? interV : QUANTIDADES_DE_TESTES[indexTeste];
-    interV += +QUANTIDADES_DE_TESTES;
+  const framesAmount = testAmount;
+
+  let intervalFrame = minQ1;
+  for (let index = 0; index < framesAmount; index++) {
+    const frameDoTesteAtual = intervalFrame;
+    intervalFrame += +testAmount;
 
     const frame = [];
 
@@ -30,63 +30,67 @@ export const NUR = ({
       classe: 5,
     };
 
-    let cont = (MAX_REFERENCIAS_PARA_RESETAR - 1);
+    let count = (maxRefReset - 1);
 
-    /** COMEÇO DO ALGORITMO - NUR */
-    for (let index = 0; index < separandoItens.length; index++) {
+    /* NUR */
+    for (let index = 0; index < splitItems.length; index++) {
 
-      const paginaComSigla = separandoItens[index];
-      const paginaType = paginaComSigla[paginaComSigla.length - 1];
-      const pagina = +paginaComSigla.replace(/.$/, '');
+      const initialPosition = splitItems[index];
+      const typePosition = initialPosition[initialPosition.length - 1];
+      const position = +initialPosition.replace(/.$/, '');
 
-      const paginaEstaNoFrame = frame.findIndex((e) => { //Criar função buscar na memoria 
-        return e.index === pagina;
+      //Função de buscar na memoria
+      const currentPosition = frame.findIndex((e) => {  
+        return e.index === position;
       })
 
-      if (paginaEstaNoFrame !== -1) {//Quando ja existe na memoria
-        frame[paginaEstaNoFrame].alterarRef(paginaType);
-        acertos += 1;
-      } else {//Quando não existe na memoria
-        faltas += 1;
-        if (frame.length < frameDoTesteAtual) {//Quando tem espaço na memoria
-          const referencia = new Frame(pagina, paginaType);
+      //Se já existir na memoria
+      if (currentPosition !== -1) {
+        frame[currentPosition].alterarRef(typePosition);
+        corrects += 1;
+      } else {
+        //Se não existir na memoria
+        faults += 1;
+        if (frame.length < frameDoTesteAtual) { 
+          //Se houver espaço na memoria
+          const referencia = new Frame(position, typePosition);
           frame.push(referencia);
-        } else {//Quando a memoria da cheia
+        } else { 
+          //Se memoria cheia
           classesRef = {
             index: -1,
             classe: 5,
           };
 
-          frame.some((pagina, index) => {
-            if (pagina.classe < classesRef.classe) {
+          frame.some((position, index) => {
+            if (position.classe < classesRef.classe) {
               classesRef = {
                 index: index,
-                classe: pagina.classe,
+                classe: position.classe,
               }
             }
-            if (pagina.classe === 0) {
+            if (position.classe === 0) {
               return true;
             }
           });
-          const substituir = classesRef.index;
-          const estruturaPagina = new Frame(pagina, paginaType);
-          frame.splice(substituir, 1);
-          frame.push(estruturaPagina);
+          const replaceValue = classesRef.index;
+          const structurePosition = new Frame(position, typePosition);
+          frame.splice(replaceValue, 1);
+          frame.push(structurePosition);
         }
       }
-      if (index === cont) {
-        cont += MAX_REFERENCIAS_PARA_RESETAR;
-        frame.forEach((pagina) => {
-          pagina.zerarRef();
+      if (index === count) {
+        count += maxRefReset;
+        frame.forEach((position) => {
+          position.zerarRef();
         })
       }
     }
-    /* FIM DO ALGORITMO - NUR */
-    respostas.push(acertos);
-    // console.log('ACERTO = ', acertos);
-    // console.log('FALTAS = ', faltas);
-    acertos = 0;
-    faltas = 0;
+    /* NUR */
+    answers.push(corrects);
+
+    corrects = 0;
+    faults = 0;
   }
-  return respostas
+  return answers
 };

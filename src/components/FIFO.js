@@ -1,49 +1,53 @@
 export const FIFO = ({
-  VAR_TESTE_INCIAL,
-  MAX_REFERENCIAS_PARA_RESETAR,
-  QUANTIDADES_DE_TESTES,
-  MIN_FRAME_Q1,
-  MAX_FRAME_Q2,
+  testeInitial,
+  testAmount,
+  minQ1,
+  maxQ2,
 }) => {
-  const separandoItens = VAR_TESTE_INCIAL.replace(/W/g, '').replace(/R/g, '').split('-');
-  separandoItens.pop();
+  const splitItems =  testeInitial
+    .replace(/W/g, '')
+    .replace(/R/g, '')
+    .split('-');
 
-  const respostas = [];
-  const legendaFrames = [];
-  let acertos = 0;
-  let faltas = 0;
+  splitItems.pop();
 
-  const numerosDeFrames = +Math.trunc((MAX_FRAME_Q2 - MIN_FRAME_Q1) / (QUANTIDADES_DE_TESTES)) + 1;
+  const answers = [];
+  const labelFrame = [];
+  let correct = 0;
+  let faults = 0;
 
-  let interV = MIN_FRAME_Q1;
-  for (let indexTeste = 0; indexTeste < numerosDeFrames; indexTeste++) {
+  const framesAmount = +Math.trunc((maxQ2 - minQ1) / (testAmount)) + 1;
+
+  // Intervalo de Frames
+  let intervalFrames = minQ1;
+  for (let index = 0; index < framesAmount; index++) {
     const frame = [];
-    const frameDoTesteAtual = typeof (QUANTIDADES_DE_TESTES) === 'string' ? interV : QUANTIDADES_DE_TESTES[indexTeste];
-    interV += +QUANTIDADES_DE_TESTES;
-    /** COMEÇO DO ALGORITMO - FIFO */
-    for (let index = 0; index < separandoItens.length; index++) {
-      const pagina = separandoItens[index];
-      const paginaEstaNoFrame = frame.find(value => value === pagina);
+    const currentFrame = intervalFrames;
+    intervalFrames += +testAmount;
 
-      if (paginaEstaNoFrame) {
-        acertos += 1;
+    /** Algoritmo FIFO **/
+    for (let index = 0; index < splitItems.length; index++) {
+      const position = splitItems[index];
+      const currentPosition = frame.find(value => value === position);
+
+      if (currentPosition) {
+        correct += 1;
       } else {
-        faltas += 1;
-        if (frame.length < frameDoTesteAtual) {
-          frame.push(pagina);
+        faults += 1;
+        if (frame.length < currentFrame) {
+          frame.push(position);
         } else {
           frame.shift();
-          frame.push(pagina);
+          frame.push(position);
         }
       }
     }
-    /** FIM DO ALGORITMO - FIFO */
-    // console.log('ACERTO = ', acertos);
-    // console.log('FALTAS = ', faltas);
-    legendaFrames.push(frameDoTesteAtual);
-    respostas.push(acertos);
-    acertos = 0;
-    faltas = 0;
+    /** Algoritmo FIFO **/
+    
+    labelFrame.push(currentFrame);
+    answers.push(correct);
+    correct = 0;
+    faults = 0;
   }
-  return [respostas, legendaFrames];
+  return [answers, labelFrame];
 };

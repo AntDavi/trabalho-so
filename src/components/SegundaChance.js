@@ -1,87 +1,89 @@
 import Frame from '../frames/ReferenciaSegundaChance.js';
 
 export const SegundaChance = ({
-  VAR_TESTE_INCIAL,
-  MAX_REFERENCIAS_PARA_RESETAR,
-  QUANTIDADES_DE_TESTES,
-  MIN_FRAME_Q1,
-  MAX_FRAME_Q2,
+  testeInitial,
+  maxRefReset,
+  testAmount,
+  minQ1,
+  maxQ2,
 }) => {
-  const separandoItens = VAR_TESTE_INCIAL.replace(/W/g, '').replace(/R/g, '').split('-');
-  separandoItens.pop();
+  const splitItems = testeInitial
+    .replace(/W/g, '')
+    .replace(/R/g, '')
+    .split('-');
 
-  const respostas = [];
-  let acertos = 0;
-  let faltas = 0;
+  splitItems.pop();
 
-  const intervalosDeFrames = Math.round((MAX_FRAME_Q2 - MIN_FRAME_Q1) / (QUANTIDADES_DE_TESTES)) + 1;
-  const numerosDeFrames = typeof (QUANTIDADES_DE_TESTES) === 'string' ? +intervalosDeFrames : QUANTIDADES_DE_TESTES.length;
+  const answers = [];
+  let corrects = 0;
+  let faults = 0;
 
-  let interV = MIN_FRAME_Q1;
-  for (let indexTeste = 0; indexTeste < numerosDeFrames; indexTeste++) {
-    const frameDoTesteAtual = typeof (QUANTIDADES_DE_TESTES) === 'string' ? interV : QUANTIDADES_DE_TESTES[indexTeste];
-    interV += +QUANTIDADES_DE_TESTES;
+  const framesAmount = testAmount
+
+  let intervalFrame = minQ1;
+  for (let index = 0; index < framesAmount; index++) {
+    const frameDoTesteAtual = intervalFrame;
+    intervalFrame += +testAmount;
 
     let frame = [];
 
-    let cont = (MAX_REFERENCIAS_PARA_RESETAR - 1);
+    let count = (maxRefReset - 1);
 
-    /** COMEÇO DO ALGORITMO - SEGUNDA CHANCE */
-    for (let index = 0; index < separandoItens.length; index++) {
-      const pagina = separandoItens[index];
-      const paginaEstaNoFrame = frame.findIndex((e) => {
-        return e.index === pagina;
+    /** Algoritmo Segunda Chance */
+    for (let index = 0; index < splitItems.length; index++) {
+      const position = splitItems[index];
+      const currentPosition = frame.findIndex((e) => {
+        return e.index === position;
       })
 
-      if (paginaEstaNoFrame !== -1) {
-        if (frame[paginaEstaNoFrame].isRef === 0) {
-          frame[paginaEstaNoFrame].alterarRef();
+      if (currentPosition !== -1) {
+        if (frame[currentPosition].isRef === 0) {
+          frame[currentPosition].alterarRef();
         }
-        acertos += 1;
+        corrects += 1;
       } else {
-        faltas += 1;
+        faults += 1;
         if (frame.length < frameDoTesteAtual) {
-          const referencia = new Frame(pagina, 1);
+          const referencia = new Frame(position, 1);
           frame.push(referencia);
         } else {
 
-          let achouMenor = false;
-          const novaLista = frame.slice();
+          let hasSmaller = false;
+          const newList = frame.slice();
 
-          frame.some((pagina) => {
-            if (pagina.isRef === 0) {
-              novaLista.shift();
-              achouMenor = true;
+          frame.some((position) => {
+            if (position.isRef === 0) {
+              newList.shift();
+              hasSmaller = true;
               return true;
             } else {
-              novaLista.shift();
-              const data = new Frame(pagina.index, 0);
-              novaLista.push(data);
+              newList.shift();
+              const data = new Frame(position.index, 0);
+              newList.push(data);
             }
           });
 
-          if (!achouMenor) {
-            novaLista.shift();
+          if (!hasSmaller) {
+            newList.shift();
           }
 
-          const novaPagina = new Frame(pagina, 1);
-          frame = novaLista;
-          frame.push(novaPagina);
+          const newPosition = new Frame(position, 1);
+          frame = newList;
+          frame.push(newPosition);
         }
       }
-      if (index === cont) {
-        cont += MAX_REFERENCIAS_PARA_RESETAR;
-        frame.forEach((pagina) => {
-          pagina.zerarRef();
+      if (index === count) {
+        count += maxRefReset;
+        frame.forEach((position) => {
+          position.zerarRef();
         })
       }
     }
-    /* FIM DO ALGORITMO - SEGUNDA CHANCE */
-    // console.log('ACERTO = ', acertos);
-    // console.log('FALTAS = ', faltas);
-    respostas.push(acertos);
-    acertos = 0;
-    faltas = 0;
+    /* Algoritmo Segunda Chance */
+
+    answers.push(corrects);
+    corrects = 0;
+    faults = 0;
   }
-  return respostas;
+  return answers;
 };

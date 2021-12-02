@@ -1,66 +1,67 @@
 export const MRU = ({
-  VAR_TESTE_INCIAL,
-  MAX_REFERENCIAS_PARA_RESETAR,
-  QUANTIDADES_DE_TESTES,
-  MIN_FRAME_Q1,
-  MAX_FRAME_Q2,
+  testeInitial,
+  testAmount,
+  minQ1,
+  maxQ2,
 }) => {
-  const separandoItens = VAR_TESTE_INCIAL.replace(/W/g, '').replace(/R/g, '').split('-');
-  separandoItens.pop();
+  const splitItems = testeInitial
+    .replace(/W/g, '')
+    .replace(/R/g, '')
+    .split('-');
+
+  splitItems.pop();
   
-  const respostas = [];
-  let acertos = 0;
-  let faltas = 0;
+  const answers = [];
+  let corrects = 0;
+  let faults = 0;
 
-  const intervalosDeFrames = Math.trunc((MAX_FRAME_Q2 - MIN_FRAME_Q1) / (QUANTIDADES_DE_TESTES))+1;
-  const numerosDeFrames = typeof(QUANTIDADES_DE_TESTES) === 'string' ? +intervalosDeFrames : QUANTIDADES_DE_TESTES.length;
+  const framesAmount = testAmount;
 
-  let interV = MIN_FRAME_Q1;
-  for (let indexTeste = 0; indexTeste < numerosDeFrames; indexTeste++) {
+  let intervalFrames = minQ1;
+  for (let index = 0; index < framesAmount; index++) {
     let frame = [];
-    const frameDoTesteAtual = typeof(QUANTIDADES_DE_TESTES) === 'string' ? interV : QUANTIDADES_DE_TESTES[indexTeste];
-    interV += +QUANTIDADES_DE_TESTES;
+    const currentFrame = intervalFrames;
+    intervalFrames += +testAmount;
 
-    /** COMEÇO DO ALGORITMO - SEGUNDA CHANCE */
-    for (let index = 0; index < separandoItens.length; index++) {
-      const pagina = separandoItens[index];
-      const paginaEstaNoFrame = frame.findIndex((e) => { 
-        return e === pagina; 
+    /* Algoritmo MRU */
+    for (let index = 0; index < splitItems.length; index++) {
+      const position = splitItems[index];
+      const currentPosition = frame.findIndex((e) => { 
+        return e === position; 
       })
       
-      if(paginaEstaNoFrame !== -1) {
-        if(paginaEstaNoFrame > 0 && paginaEstaNoFrame !== frame.length) {
+      if(currentPosition !== -1) {
+        if(currentPosition > 0 && currentPosition !== frame.length) {
           const newList = [];
 
           frame.forEach((nome) => {
-            if (nome !== pagina) {
+            if (nome !== position) {
               newList.push(nome);
             }
           });
 
-          newList.push(pagina);
+          newList.push(position);
           frame = newList;
-        } else if (paginaEstaNoFrame === 0) {
+        } else if (currentPosition === 0) {
           frame.shift();
-          frame.push(pagina);
+          frame.push(position);
         }
-        acertos += 1;
+        corrects += 1;
       } else {
-        faltas += 1;
-        if(frame.length < frameDoTesteAtual) {
-          frame.push(pagina);
+        faults += 1;
+        if(frame.length < currentFrame) {
+          frame.push(position);
         } else {
           frame.shift();
-          frame.push(pagina);
+          frame.push(position);
         }
       }
     }
-    /* FIM DO ALGORITMO - SEGUNDA CHANCE */
-    // console.log('ACERTO = ', acertos);
-    // console.log('FALTAS = ', faltas);
-    respostas.push(acertos);
-    acertos = 0;
-    faltas = 0;
+    /* Algoritmo MRU */
+
+    answers.push(corrects);
+    corrects = 0;
+    faults = 0;
   }
-  return respostas;
+  return answers;
 };
