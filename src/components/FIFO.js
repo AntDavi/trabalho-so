@@ -8,29 +8,28 @@ export const FIFO = ({
   const separandoItens = VAR_TESTE_INCIAL.replace(/W/g, '').replace(/R/g, '').split('-');
   separandoItens.pop();
 
-  const respostas= [];
-  const legendaFrames= [];
+  const respostas = [];
+  const legendaFrames = [];
   let acertos = 0;
   let faltas = 0;
 
-  const intervalosDeFrames = Math.trunc((MAX_FRAME_Q2 - MIN_FRAME_Q1) / (QUANTIDADES_DE_TESTES))+1;
-  const numerosDeFrames = typeof(QUANTIDADES_DE_TESTES) === 'string' ? +intervalosDeFrames : QUANTIDADES_DE_TESTES.length;
+  const numerosDeFrames = +Math.trunc((MAX_FRAME_Q2 - MIN_FRAME_Q1) / (QUANTIDADES_DE_TESTES)) + 1;
 
   let interV = MIN_FRAME_Q1;
   for (let indexTeste = 0; indexTeste < numerosDeFrames; indexTeste++) {
     const frame = [];
-    const frameDoTesteAtual = typeof(QUANTIDADES_DE_TESTES) === 'string' ? interV : QUANTIDADES_DE_TESTES[indexTeste];
+    const frameDoTesteAtual = typeof (QUANTIDADES_DE_TESTES) === 'string' ? interV : QUANTIDADES_DE_TESTES[indexTeste];
     interV += +QUANTIDADES_DE_TESTES;
     /** COMEÇO DO ALGORITMO - FIFO */
     for (let index = 0; index < separandoItens.length; index++) {
       const pagina = separandoItens[index];
-      const paginaEstaNoFrame = frame.find( value => value === pagina );
+      const paginaEstaNoFrame = frame.find(value => value === pagina);
 
-      if(paginaEstaNoFrame) {
+      if (paginaEstaNoFrame) {
         acertos += 1;
       } else {
         faltas += 1;
-        if(frame.length < frameDoTesteAtual) {
+        if (frame.length < frameDoTesteAtual) {
           frame.push(pagina);
         } else {
           frame.shift();

@@ -1,4 +1,4 @@
-import Frame from "../classes/ReferenciaNUR.js";
+import Frame from "../frames/ReferenciaNUR.js";
 
 
 export const NUR = ({

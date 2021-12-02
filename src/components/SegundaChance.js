@@ -1,4 +1,4 @@
-import Frame from '../classes/ReferenciaSegundaChance.js';
+import Frame from '../frames/ReferenciaSegundaChance.js';
 
 export const SegundaChance = ({
   VAR_TESTE_INCIAL,
