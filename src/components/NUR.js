@@ -16,7 +16,8 @@ export const NUR = ({
   let corrects = 0;
   let faults = 0;
 
-  const framesAmount = testAmount;
+  const frameInterval = Math.round((maxQ2 - minQ1) / (testAmount)) + 1;
+  const framesAmount = typeof (testAmount) === 'string' ? +frameInterval : testAmount.length;
 
   let intervalFrame = minQ1;
   for (let index = 0; index < framesAmount; index++) {
@@ -40,7 +41,7 @@ export const NUR = ({
       const position = +initialPosition.replace(/.$/, '');
 
       //Função de buscar na memoria
-      const currentPosition = frame.findIndex((e) => {  
+      const currentPosition = frame.findIndex((e) => {
         return e.index === position;
       })
 
@@ -51,11 +52,11 @@ export const NUR = ({
       } else {
         //Se não existir na memoria
         faults += 1;
-        if (frame.length < frameDoTesteAtual) { 
+        if (frame.length < frameDoTesteAtual) {
           //Se houver espaço na memoria
           const referencia = new Frame(position, typePosition);
           frame.push(referencia);
-        } else { 
+        } else {
           //Se memoria cheia
           classesRef = {
             index: -1,

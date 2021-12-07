@@ -18,7 +18,8 @@ export const SegundaChance = ({
   let corrects = 0;
   let faults = 0;
 
-  const framesAmount = testAmount
+  const frameInterval = Math.round((maxQ2 - minQ1) / (testAmount)) + 1;
+  const framesAmount = typeof (testAmount) === 'string' ? +frameInterval : testAmount.length;
 
   let intervalFrame = minQ1;
   for (let index = 0; index < framesAmount; index++) {

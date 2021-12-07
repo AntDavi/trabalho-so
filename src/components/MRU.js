@@ -10,12 +10,13 @@ export const MRU = ({
     .split('-');
 
   splitItems.pop();
-  
+
   const answers = [];
   let corrects = 0;
   let faults = 0;
 
-  const framesAmount = testAmount;
+  const frameInterval = Math.round((maxQ2 - minQ1) / (testAmount)) + 1;
+  const framesAmount = typeof (testAmount) === 'string' ? +frameInterval : testAmount.length;
 
   let intervalFrames = minQ1;
   for (let index = 0; index < framesAmount; index++) {
@@ -26,12 +27,12 @@ export const MRU = ({
     /* Algoritmo MRU */
     for (let index = 0; index < splitItems.length; index++) {
       const position = splitItems[index];
-      const currentPosition = frame.findIndex((e) => { 
-        return e === position; 
+      const currentPosition = frame.findIndex((e) => {
+        return e === position;
       })
-      
-      if(currentPosition !== -1) {
-        if(currentPosition > 0 && currentPosition !== frame.length) {
+
+      if (currentPosition !== -1) {
+        if (currentPosition > 0 && currentPosition !== frame.length) {
           const newList = [];
 
           frame.forEach((nome) => {
@@ -49,7 +50,7 @@ export const MRU = ({
         corrects += 1;
       } else {
         faults += 1;
-        if(frame.length < currentFrame) {
+        if (frame.length < currentFrame) {
           frame.push(position);
         } else {
           frame.shift();

@@ -26,7 +26,7 @@ function start(graphic) {
         minQ1: +Q1,
         maxQ2: +Q2,
       }
-      
+
       // Limpar grafico
       graphic.data.labels.pop();
       graphic.data.datasets.forEach((dataset) => {
@@ -109,5 +109,5 @@ function start(graphic) {
   });
 
   document.getElementById('calcular').addEventListener('click', () => start(graphic));
-  
+
 })();
